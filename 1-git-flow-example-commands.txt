@@ -1,0 +1,62 @@
+The example below show You how to made a single release cycle, first you should create a central repository, then you create a develop branch.
+
+You create a develop branch
+
+git branch develop
+git push -u origin develop
+
+This branch contain the complete history of your project, now whereas your master contain new version. Your team should now clone the central repository and create a tracking branch for develop.
+
+You create a tracking branch for develop
+
+git clone ssg: //user@/path/
+git checkout -b develop origin/develop 
+
+Everybody now has a local copy of the historical branches set up. So You decide to make a new feature. For that you create separate branches for your respective features with base as your develop branch.
+
+You begin a new feature
+
+git checkout -b some-feature develop
+
+You can to add commits to the feature branch as You wish, then:
+
+git status
+git add <some-file>
+git commit
+
+You finish your feature
+
+After adding new features, You decides that your feature are ready, now You can merge it into your local develop and push it to the central repository, like so:
+
+git pull origin develop
+git checkout develop
+git merge some-feature
+git push
+git branch -d some-feature
+
+The first command makes sure the develop is up to date before trying to merge in the feature. Note that features should never be merged directly into master.
+
+You begin to prepare a release
+
+While others develop's working on his feature, You can start to prepare the first official release of project, You can to use a new branch to encapsulate the release preparations. This step is also where the release's version number is established:
+
+git checkout -b release-0.1 develop
+
+This branch is a place to clean up the release, test everything, update the documentation, and do any other kind of preparation for the upcoming release. It’s like a feature branch dedicated to polishing the release.
+
+You finish the release
+
+Once the release is ready to ship, You merges it into master and develop, then delete the release branch.It's important to merge back into develop because critical updates may have been added to the release branch and they need to be accessible to new features. Like so:
+
+git checkout master
+git merge release-0.1
+git push
+git checkout develop
+git merge release-0.1
+git push
+git branch -d release-0.1
+
+You should know that release branches act as buffer between feature development and public releases. Is good idea that whenever you merge something into master, you should tag the commit for easy reference:
+
+git tag -a 0.1 -m "Initial public release" master
+git push --tags
